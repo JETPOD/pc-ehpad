@@ -1,7 +1,7 @@
 /* Schéma fermé : aucun texte libre, score, réponse ou identifiant d'apprenant.
    Ce fichier doit précéder l'initialisation de Plausible. */
 (() => {
-  const allowed = /^(pageview|engagement|PC EHPAD · (Jeu démarré|Parcours terminé|Module [1-5] (démarré|terminé)))$/;
+  const allowed = /^(pageview|engagement|Attestation · (Participation|Réussite|Excellence)|PC EHPAD · (Jeu démarré|Parcours terminé|Module [1-5] (démarré|terminé)))$/;
   const sent = new Set();
   window.pcAnalytics = {
     transformRequest(payload) {

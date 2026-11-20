@@ -281,9 +281,11 @@
         ${next ? `<button class="btn" id="nx">Module ${next.num} : ${esc(next.titre)}</button>` : ""}
         <button class="btn ${next ? "ghost" : ""}" id="rp">Voir le bilan complet</button>
         <button class="btn ghost" id="rs">Rejouer ce module</button>
+        <button class="btn ghost" id="att">Mon attestation du module</button>
       </div></div>`;
     next && $("#nx").addEventListener("click", () => startModule(next.id));
     $("#rp").addEventListener("click", () => go("report"));
+    $("#att").addEventListener("click", () => window.SGAttestation && window.SGAttestation.open({ jeu: "Chambre par chambre", module: `module ${m.num} : ${m.titre}`, code: "CPC", color: "#1e5a47", ratio: c.ok / n, critical: c.risque }));
     $("#rs").addEventListener("click", () => { m.decisions.forEach((d) => delete st.answers[d.id]); st.pending = null; startModule(m.id); });
   }
 
@@ -301,8 +303,9 @@
       ${forFile ? "" : ""}`;
   }
   function report() {
-    main.innerHTML = reportHtml() + `<div class="row noprint"><button class="btn" id="pr">Imprimer</button><button class="btn ghost" id="dl">Télécharger le bilan</button><button class="btn ghost" id="bk">Retour aux modules</button></div>`;
+    main.innerHTML = reportHtml() + `<div class="row noprint">${Object.keys(st.answers).length === TOTAL ? `<button class="btn" id="att">Obtenir mon attestation</button>` : ""}<button class="btn ${Object.keys(st.answers).length === TOTAL ? "ghost" : ""}" id="pr">Imprimer</button><button class="btn ghost" id="dl">Télécharger le bilan</button><button class="btn ghost" id="bk">Retour aux modules</button></div>`;
     $("#pr").addEventListener("click", () => window.print());
+    $("#att") && $("#att").addEventListener("click", () => { const c = tally(); window.SGAttestation && window.SGAttestation.open({ jeu: "Chambre par chambre", module: `parcours complet des ${M.length} modules`, code: "CPC", color: "#1e5a47", ratio: c.ok / TOTAL, critical: c.risque }); });
     $("#bk").addEventListener("click", () => go("home"));
     $("#dl").addEventListener("click", () => {
       const css = [...document.styleSheets].map((s) => { try { return [...s.cssRules].map((r) => r.cssText).join("\n"); } catch { return ""; } }).join("\n");
@@ -334,7 +337,7 @@
     main.innerHTML = `<div class="prose"><p class="eyebrow">Guide d'animation</p><h1>Animer une séance de 45 minutes</h1>
       <p>Public : AS, AMP, ASH, IDE, IDEC, médecin coordonnateur, intervenants extérieurs. Format : petit groupe de 4 à 10 personnes devant un écran, ou parcours individuel suivi d'un débriefing.</p>
       <h2>Déroulé proposé</h2>
-      <ol><li><b>5 minutes, cadrage.</b> Rappeler que les cas sont fictifs, que la procédure locale prévaut et que le bilan n'est ni conservé ni noté.</li>
+      <ol><li><b>5 minutes, cadrage.</b> Rappeler que les cas sont fictifs, que la procédure locale prévaut et que le bilan n'est ni conservé ni noté. L'attestation finale n'indique que le palier atteint.</li>
       <li><b>10 minutes, module 1.</b> Le socle : faire voter le groupe à main levée avant chaque validation.</li>
       <li><b>10 minutes, module 2 ou 3 selon le public.</b> Soignants : module 3 (organisation). Encadrement : module 2 (choix du type).</li>
       <li><b>10 minutes, module 4.</b> Lire la chronologie à voix haute ; faire justifier le critère de levée.</li>
